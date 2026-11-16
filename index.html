@@ -254,7 +254,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
     <div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
     <h1 style="margin-bottom:4px">Akses Guru</h1>
     <div style="color:var(--sub);font-size:15px">Masukkan PIN untuk melihat aduan</div>
-    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••••" autocomplete="off">
+    <input id="pin" type="password" maxlength="12" placeholder="••••••" autocomplete="off" autocapitalize="off" spellcheck="false">
     <button class="btn press" id="btnLogin">Masuk</button>
   </div>
   <div id="guruMain" class="hide">
@@ -372,7 +372,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
     <div class="card"><div class="row"><textarea id="aEmel" autocapitalize="off" spellcheck="false" placeholder="Satu emel setiap baris&#10;guru1@moe-dl.edu.my&#10;guru2@gmail.com"></textarea></div></div>
     <p class="note">Setiap aduan baharu dihantar ke semua emel ini.</p>
     <div class="label">Tukar PIN</div>
-    <div class="card"><div class="row"><input id="aPin" inputmode="numeric" maxlength="8" placeholder="PIN baharu (kosongkan jika tiada perubahan)"></div></div>
+    <div class="card"><div class="row"><input id="aPin" maxlength="12" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="PIN baharu (kosongkan jika tiada perubahan)"></div></div>
     <div style="margin-top:22px;display:grid;gap:10px">
       <button class="btn gray press" id="btnTestMail">Hantar emel ujian</button>
       <button class="btn gray press" id="btnLogout" style="color:var(--red)">Log keluar</button>
@@ -403,11 +403,16 @@ let rows = [], filt = { jenis:'', status:'', q:'' }, cur = null;
 let toastT;
 function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2800); }
 const gasUrl = () => (CONFIG.GAS_URL || store.get('gasUrl', '')).trim();
+function deviceId(){
+  let d = store.get('did', '');
+  if(!/^[A-Za-z0-9-]{8,64}$/.test(d)){ d = (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2)); store.set('did', d); }
+  return d;
+}
 async function api(action, data = {}){
   const url = gasUrl();
   if(!url) throw new Error('Aplikasi belum disambungkan. Hubungi pentadbir.');
   let r;
-  try{ r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ action, ...data }) }); }
+  try{ r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ action, ...data, did: deviceId() }) }); }
   catch(e){ const er = new Error('Tiada sambungan internet'); er.network = true; throw er; }
   let j; try{ j = await r.json(); }catch(e){ throw new Error('Pelayan tidak membalas dengan betul'); }
   if(!j.ok) throw new Error(j.error || 'Ralat tidak diketahui');
@@ -648,7 +653,7 @@ $('#btnAdminSave').onclick = async () => {
   const bad = emel.find(x => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
   if(bad) return toast('Emel tidak sah: ' + bad);
   const pinBaru = $('#aPin').value.trim();
-  if(pinBaru && !/^\d{4,8}$/.test(pinBaru)) return toast('PIN mesti 4–8 digit');
+  if(pinBaru && !/^[A-Za-z0-9]{4,12}$/.test(pinBaru)) return toast('PIN mesti 4–12 huruf/nombor');
   const btn = $('#btnAdminSave'); btn.disabled = true;
   try{
     await api('saveSettings', { pin: store.get('pin', ''), sekolah: $('#aSekolah').value.trim(), emel: emel.join(', '), pinBaru });
