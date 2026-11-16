@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Aduan Disiplin & Buli · SMK Taman Medan</title>
+<meta name="description" content="Saluran aduan disiplin dan buli SMK Taman Medan">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Aduan">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<script>
+/* ======= TETAPAN: tampal URL Web App Apps Script (/exec) di sini sebelum deploy ======= */
+const CONFIG = { GAS_URL: '', SEKOLAH: 'SMK Taman Medan' };
+</script>
+<style>
+:root{
+  --bg:#f2f2f7;--card:#fff;--text:#1c1c1e;--sub:#8e8e93;--sep:rgba(60,60,67,.14);--fill:rgba(118,118,128,.12);
+  --blue:#007aff;--red:#ff3b30;--orange:#ff9500;--green:#34c759;--indigo:#5856d6;
+  --bar:rgba(249,249,249,.82);--shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05);
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#000;--card:#1c1c1e;--text:#fff;--sub:#98989f;--sep:rgba(84,84,88,.5);--fill:rgba(118,118,128,.24);
+  --blue:#0a84ff;--red:#ff453a;--orange:#ff9f0a;--green:#30d158;--indigo:#5e5ce6;--bar:rgba(22,22,24,.8);--shadow:none;
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+  font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button,input,textarea,select{font:inherit;color:inherit}
+button{border:0;background:none;padding:0;cursor:pointer}
+#app{max-width:520px;margin:0 auto;min-height:100%;position:relative}
+.view{display:none;padding:calc(var(--sat) + 14px) 16px calc(var(--sab) + 96px);animation:fade .28s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.top{display:flex;align-items:center;justify-content:space-between;min-height:36px}
+.eyebrow{font-size:13px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
+.ibtn{width:36px;height:36px;border-radius:50%;background:var(--fill);display:grid;place-items:center;color:var(--blue);flex:none;margin-left:8px}
+.ibtn svg{width:19px;height:19px}
+.ibtn:active,.press:active{transform:scale(.96);opacity:.8}
+.press{transition:transform .15s,opacity .15s}
+
+.hero{border-radius:24px;padding:22px;color:#fff;background:linear-gradient(135deg,#5856d6,#007aff 60%,#32ade6);position:relative;overflow:hidden;box-shadow:0 12px 30px rgba(0,122,255,.28)}
+.hero:after{content:"";position:absolute;right:-50px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.14)}
+.hero b{font-size:21px;letter-spacing:-.3px;display:block;margin-bottom:6px}
+.hero p{margin:0;font-size:14.5px;opacity:.92;max-width:300px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 22px}
+.act{background:var(--card);border-radius:22px;padding:16px;text-align:left;box-shadow:var(--shadow);display:block;width:100%}
+.act .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;margin-bottom:22px}
+.act .ic svg{width:25px;height:25px}
+.act b{display:block;font-size:17px;letter-spacing:-.2px}
+.act span{font-size:13px;color:var(--sub)}
+.g-red{background:linear-gradient(135deg,#ff6b5e,#ff2d55)}.g-org{background:linear-gradient(135deg,#ffb340,#ff7a00)}
+
+.label{font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.3px;margin:22px 16px 7px}
+.note{font-size:13px;color:var(--sub);margin:7px 16px 0}
+.card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.row{display:flex;align-items:center;gap:12px;padding:12px 16px;min-height:48px;position:relative}
+.row+.row:before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.row .k{flex:none;width:112px;font-size:15px}
+.row input,.row select,.row textarea{flex:1;min-width:0;border:0;background:none;outline:0;font-size:16px;padding:0;text-align:left;appearance:none;-webkit-appearance:none}
+.row textarea{resize:none;min-height:96px;line-height:1.4}
+.row input::placeholder,.row textarea::placeholder{color:var(--sub);opacity:.7}
+.num{width:28px;height:28px;border-radius:50%;background:var(--fill);color:var(--blue);font-weight:700;font-size:14px;display:grid;place-items:center;flex:none}
+.row small{display:block;color:var(--sub);font-size:13px}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 2px}
+.chip{padding:9px 14px;border-radius:999px;background:var(--card);font-size:14.5px;box-shadow:var(--shadow);transition:.15s}
+.chip.on{background:var(--blue);color:#fff}
+.seg{display:flex;background:var(--fill);border-radius:10px;padding:2px;gap:2px}
+.seg button{flex:1;padding:7px 4px;border-radius:8px;font-size:13.5px;font-weight:500;transition:.18s;white-space:nowrap}
+.seg button.on{background:var(--card);box-shadow:0 2px 6px rgba(0,0,0,.12);font-weight:600}
+@media (prefers-color-scheme:dark){.seg button.on{background:#636366}}
+.sw{position:relative;width:51px;height:31px;flex:none;margin-left:auto}
+.sw input{opacity:0;width:100%;height:100%;position:absolute;margin:0;z-index:1}
+.sw i{position:absolute;inset:0;border-radius:31px;background:var(--fill);transition:.22s}
+.sw i:after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:.22s}
+.sw input:checked+i{background:var(--green)}.sw input:checked+i:after{transform:translateX(20px)}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;background:var(--blue);color:#fff;font-weight:600;font-size:17px}
+.btn.gray{background:var(--fill);color:var(--blue)}.btn.red{background:var(--red)}
+.btn:disabled{opacity:.5}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:sp .7s linear infinite}
+.spin.dk{border-color:var(--fill);border-top-color:var(--sub);margin:30px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none;padding:0 16px calc(var(--sab) + 10px)}
+.tabbar nav{pointer-events:auto;display:flex;gap:4px;padding:6px;border-radius:32px;background:var(--bar);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);
+  box-shadow:0 8px 32px rgba(0,0,0,.16),inset 0 0 0 .5px var(--sep)}
+.tabbar button{width:92px;padding:7px 0 6px;border-radius:26px;color:var(--sub);font-size:10.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;transition:.2s}
+.tabbar svg{width:24px;height:24px}
+.tabbar button.on{color:var(--blue);background:var(--fill)}
+
+/* sheets */
+.back{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:30;opacity:0;pointer-events:none;transition:opacity .3s}
+.back.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:520px;margin:0 auto;background:var(--bg);border-radius:22px 22px 0 0;
+  max-height:calc(100% - var(--sat) - 12px);display:flex;flex-direction:column;transform:translateY(105%);transition:transform .42s cubic-bezier(.32,.72,0,1)}
+.sheet.full{height:calc(100% - var(--sat) - 12px)}
+.sheet.on{transform:none}
+.sheet .grab{width:36px;height:5px;border-radius:3px;background:var(--sep);margin:6px auto 0;flex:none}
+.sheet .nav{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 10px;flex:none}
+.sheet .nav b{font-size:17px}
+.sheet .nav button{color:var(--blue);font-size:17px;min-width:60px;text-align:left}
+.sheet .nav button:last-child{text-align:right;font-weight:600}
+.sheet .body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px calc(var(--sab) + 24px);flex:1}
+
+.thumbs{display:flex;gap:10px;flex-wrap:wrap}
+.thumb{width:78px;height:78px;border-radius:14px;background:var(--card) center/cover;position:relative;box-shadow:var(--shadow)}
+.thumb button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--sub);color:#fff;font-size:14px;line-height:22px}
+.thumb.add{display:grid;place-items:center;color:var(--blue);border:1.5px dashed var(--sep);box-shadow:none;background:none}
+.thumb.add svg{width:26px;height:26px}
+
+.done{text-align:center;padding:36px 8px}
+.tick{width:84px;height:84px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 18px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+.tick svg{width:44px;height:44px;color:#fff}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.ref{font:700 22px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.5px;padding:16px;background:var(--card);border-radius:16px;margin:18px 0 10px;user-select:all}
+
+.badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:7px;letter-spacing:.2px;white-space:nowrap}
+.b-Buli{background:rgba(255,59,48,.14);color:var(--red)}.b-Disiplin{background:rgba(255,149,0,.16);color:var(--orange)}
+.b-Baru{background:rgba(0,122,255,.14);color:var(--blue)}.b-Dalam{background:rgba(255,149,0,.16);color:var(--orange)}.b-Selesai{background:rgba(52,199,89,.16);color:var(--green)}
+.b-Segera{background:var(--red);color:#fff}
+.item{display:block;width:100%;text-align:left;padding:13px 16px;position:relative}
+.item+.item:before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.item:active{background:var(--fill)}
+.item .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
+.item .h time{margin-left:auto;font-size:12.5px;color:var(--sub)}
+.item b{font-size:16px;display:block}
+.item p{margin:2px 0 0;font-size:14px;color:var(--sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:18px;padding:13px 14px;box-shadow:var(--shadow);text-align:left}
+.stat.on{outline:2px solid var(--blue)}
+.stat b{font-size:28px;font-weight:800;letter-spacing:-.5px;display:block;line-height:1.1}
+.stat span{font-size:12.5px;color:var(--sub);font-weight:600}
+.search{display:flex;align-items:center;gap:8px;background:var(--fill);border-radius:11px;padding:8px 10px;margin:12px 0}
+.search svg{width:17px;height:17px;color:var(--sub);flex:none}
+.search input{border:0;background:none;outline:0;flex:1;min-width:0;font-size:16px}
+.empty{text-align:center;color:var(--sub);padding:40px 20px;font-size:15px}
+.kv{padding:11px 16px;position:relative}
+.kv+.kv:before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.kv small{display:block;font-size:12.5px;color:var(--sub);margin-bottom:1px}
+.kv div{white-space:pre-wrap;word-break:break-word}
+.kv a{color:var(--blue);text-decoration:none;display:block}
+.lock{text-align:center;padding-top:8vh}
+.lock .lk{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#5856d6,#007aff);display:grid;place-items:center;margin:0 auto 16px;color:#fff}
+.lock .lk svg{width:34px;height:34px}
+.lock input{width:100%;text-align:center;font-size:26px;letter-spacing:10px;padding:14px;border-radius:14px;border:0;background:var(--card);outline:0;margin:18px 0 12px;box-shadow:var(--shadow)}
+.banner{display:none;align-items:center;gap:10px;background:rgba(255,149,0,.15);color:var(--orange);border-radius:14px;padding:11px 14px;font-size:14px;font-weight:500;margin-bottom:14px}
+.banner.on{display:flex}
+.toast{position:fixed;left:50%;top:calc(var(--sat) + 14px);transform:translate(-50%,-90px);z-index:99;background:rgba(40,40,42,.94);color:#fff;padding:11px 18px;border-radius:999px;
+  font-size:14.5px;font-weight:500;transition:transform .4s cubic-bezier(.32,.72,0,1);max-width:88%;text-align:center;backdrop-filter:blur(12px)}
+.toast.on{transform:translate(-50%,0)}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ================= LAPOR ================= -->
+<section class="view on" id="v-lapor">
+  <div class="top"><div class="eyebrow" id="sekolah">SMK Taman Medan</div>
+    <button class="ibtn" id="btnGear" aria-label="Tetapan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+  <h1>Aduan</h1>
+  <div class="banner" id="pendingBanner">⏳ <span id="pendingText"></span></div>
+  <div class="hero"><b>Suara anda dilindungi.</b><p>Laporkan kes buli atau salah laku disiplin. Anda boleh melapor tanpa nama — hanya guru disiplin yang dapat melihat aduan.</p></div>
+  <div class="grid2">
+    <button class="act press" data-lapor="Buli"><div class="ic g-red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/></svg></div><b>Lapor Buli</b><span>Fizikal, lisan, siber, ugutan</span></button>
+    <button class="act press" data-lapor="Disiplin"><div class="ic g-org"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div><b>Lapor Disiplin</b><span>Ponteng, vape, gaduh, dll.</span></button>
+  </div>
+  <div class="label">Bagaimana ia berfungsi</div>
+  <div class="card">
+    <div class="row"><div class="num">1</div><div>Isi borang aduan<small>Ambil masa kurang 2 minit</small></div></div>
+    <div class="row"><div class="num">2</div><div>Guru disiplin dimaklumkan<small>Notifikasi terus ke emel guru</small></div></div>
+    <div class="row"><div class="num">3</div><div>Semak status aduan<small>Guna no. rujukan yang diberi</small></div></div>
+  </div>
+  <p class="note">Jika anda atau rakan dalam bahaya sekarang, terus maklumkan kepada guru berdekatan. Talian Kasih: <a href="tel:15999" style="color:var(--blue);text-decoration:none">15999</a></p>
+</section>
+
+<!-- ================= SEMAK ================= -->
+<section class="view" id="v-semak">
+  <div class="top"><div class="eyebrow">Status Aduan</div></div>
+  <h1>Semak</h1>
+  <div class="card"><div class="row"><input id="semakId" placeholder="ADU-000000-XXXXXX" autocapitalize="characters" autocomplete="off" spellcheck="false"></div></div>
+  <div style="margin-top:12px"><button class="btn press" id="btnSemak">Semak status</button></div>
+  <div id="semakOut"></div>
+  <div id="mineWrap" class="hide">
+    <div class="label">Aduan dari peranti ini</div>
+    <div class="card" id="mine"></div>
+    <p class="note"><a href="#" id="clearMine" style="color:var(--red);text-decoration:none">Padam senarai dari peranti ini</a></p>
+  </div>
+</section>
+
+<!-- ================= GURU ================= -->
+<section class="view" id="v-guru">
+  <div id="guruLock" class="lock">
+    <div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+    <h1 style="margin-bottom:4px">Akses Guru</h1>
+    <div style="color:var(--sub);font-size:15px">Masukkan PIN untuk melihat aduan</div>
+    <input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="••••••" autocomplete="off">
+    <button class="btn press" id="btnLogin">Masuk</button>
+  </div>
+  <div id="guruMain" class="hide">
+    <div class="top"><div class="eyebrow">Panel Guru Disiplin</div>
+      <div style="display:flex">
+        <button class="ibtn" id="btnRefresh" aria-label="Muat semula"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg></button>
+        <button class="ibtn" id="btnAdminSet" aria-label="Tetapan guru"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></button>
+      </div>
+    </div>
+    <h1>Aduan Masuk</h1>
+    <div class="stats" id="stats"></div>
+    <div class="seg" id="fJenis"><button class="on" data-v="">Semua</button><button data-v="Buli">Buli</button><button data-v="Disiplin">Disiplin</button></div>
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Cari nama, kelas, kategori…" autocomplete="off"></div>
+    <div class="card" id="list"><div class="spin dk"></div></div>
+  </div>
+</section>
+
+<div class="tabbar"><nav>
+  <button class="on" data-tab="lapor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v8M8 12h8"/></svg>Lapor</button>
+  <button data-tab="semak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8.5 11l2 2 3.5-4"/></svg>Semak</button>
+  <button data-tab="guru"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Guru</button>
+</nav></div>
+
+<div class="back" id="back"></div>
+
+<!-- Borang aduan -->
+<div class="sheet full" id="s-form">
+  <div class="grab"></div>
+  <div class="nav"><button data-close>Batal</button><b id="formTitle">Aduan</b><button style="visibility:hidden">.</button></div>
+  <div class="body">
+    <div id="formBody">
+      <div class="label" style="margin-top:6px">Kategori</div>
+      <div class="chips" id="cKategori"></div>
+
+      <div class="label">Tahap</div>
+      <div class="seg" id="cTahap"><button class="on" data-v="Biasa">Biasa</button><button data-v="Segera">🚨 Segera</button></div>
+
+      <div class="label">Bila & di mana</div>
+      <div class="card">
+        <div class="row"><span class="k">Tarikh</span><input type="date" id="fTarikh"></div>
+        <div class="row"><span class="k">Masa</span><input type="time" id="fMasa"></div>
+        <div class="row"><span class="k">Lokasi</span><input id="fLokasi" placeholder="Cth: Tandas Blok B" maxlength="150"></div>
+      </div>
+      <div class="chips" id="cLokasi" style="margin-top:10px"></div>
+
+      <div class="label">Siapa terlibat</div>
+      <div class="card">
+        <div class="row"><textarea id="fTerlibat" style="min-height:64px" maxlength="500" placeholder="Nama & kelas murid yang terlibat (jika tahu)"></textarea></div>
+        <div class="row" id="rowMangsa"><input id="fMangsa" maxlength="300" placeholder="Nama & kelas mangsa (jika bukan anda)"></div>
+      </div>
+
+      <div class="label">Apa yang berlaku</div>
+      <div class="card"><div class="row"><textarea id="fKet" maxlength="3000" placeholder="Ceritakan kejadian dengan jelas…"></textarea></div></div>
+
+      <div class="label">Bukti gambar (pilihan)</div>
+      <div class="thumbs" id="thumbs"></div>
+      <input type="file" id="file" accept="image/*" multiple hidden>
+
+      <div class="label">Pelapor</div>
+      <div class="card">
+        <div class="row"><div>Lapor tanpa nama<small>Identiti anda tidak direkodkan</small></div><label class="sw"><input type="checkbox" id="fAnon"><i></i></label></div>
+        <div class="row"><span class="k">Saya ialah</span><select id="fPeranan"><option>Murid</option><option>Ibu bapa / Penjaga</option><option>Guru / Staf</option><option>Lain-lain</option></select></div>
+        <div class="row anon-hide"><span class="k">Nama</span><input id="fNama" maxlength="120" placeholder="Nama & kelas"></div>
+        <div class="row anon-hide"><span class="k">No. telefon</span><input id="fTel" type="tel" maxlength="20" placeholder="Pilihan"></div>
+      </div>
+      <p class="note">Aduan palsu boleh dikenakan tindakan. Sila lapor dengan jujur.</p>
+      <div style="margin-top:20px"><button class="btn press" id="btnHantar">Hantar aduan</button></div>
+    </div>
+    <div id="formDone" class="done hide">
+      <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+      <h1 style="margin:0 0 6px;font-size:28px" id="doneTitle">Aduan diterima</h1>
+      <div style="color:var(--sub)" id="doneSub">Guru disiplin telah dimaklumkan. Simpan no. rujukan ini untuk semak status.</div>
+      <div class="ref" id="doneRef"></div>
+      <button class="btn gray press" id="btnCopy" style="margin-bottom:10px">Salin no. rujukan</button>
+      <button class="btn press" data-close>Selesai</button>
+    </div>
+  </div>
+</div>
+
+<!-- Butiran (guru) -->
+<div class="sheet full" id="s-detail">
+  <div class="grab"></div>
+  <div class="nav"><button data-close>Tutup</button><b id="dTitle">Butiran</b><button id="btnSave">Simpan</button></div>
+  <div class="body">
+    <div class="card" id="dInfo"></div>
+    <div class="label">Status</div>
+    <div class="seg" id="dStatus"><button data-v="Baru">Baru</button><button data-v="Dalam Siasatan">Siasatan</button><button data-v="Selesai">Selesai</button></div>
+    <div class="label">Maklum balas kepada pelapor</div>
+    <div class="card"><div class="row"><textarea id="dMaklum" style="min-height:64px" maxlength="1000" placeholder="Dipaparkan apabila pelapor semak status"></textarea></div></div>
+    <div class="label">Catatan dalaman (guru sahaja)</div>
+    <div class="card"><div class="row"><textarea id="dCatatan" maxlength="2000" placeholder="Tindakan yang diambil, hasil siasatan…"></textarea></div>
+      <div class="row"><span class="k">Dikemaskini</span><input id="dOleh" maxlength="80" placeholder="Nama guru"></div></div>
+  </div>
+</div>
+
+<!-- Tetapan sambungan -->
+<div class="sheet" id="s-gear">
+  <div class="grab"></div>
+  <div class="nav"><button data-close>Tutup</button><b>Tetapan</b><button id="btnGearSave">Simpan</button></div>
+  <div class="body">
+    <div class="label" style="margin-top:6px">URL Apps Script</div>
+    <div class="card"><div class="row"><input id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocomplete="off" spellcheck="false"></div></div>
+    <p class="note" id="gearNote">Untuk pentadbir sahaja. URL Web App yang berakhir dengan /exec.</p>
+  </div>
+</div>
+
+<!-- Tetapan guru -->
+<div class="sheet" id="s-admin">
+  <div class="grab"></div>
+  <div class="nav"><button data-close>Tutup</button><b>Tetapan Guru</b><button id="btnAdminSave">Simpan</button></div>
+  <div class="body">
+    <div class="label" style="margin-top:6px">Sekolah</div>
+    <div class="card"><div class="row"><input id="aSekolah" maxlength="120" placeholder="Nama sekolah"></div></div>
+    <div class="label">Emel guru penerima notifikasi</div>
+    <div class="card"><div class="row"><textarea id="aEmel" autocapitalize="off" spellcheck="false" placeholder="Satu emel setiap baris&#10;guru1@moe-dl.edu.my&#10;guru2@gmail.com"></textarea></div></div>
+    <p class="note">Setiap aduan baharu dihantar ke semua emel ini.</p>
+    <div class="label">Tukar PIN</div>
+    <div class="card"><div class="row"><input id="aPin" inputmode="numeric" maxlength="8" placeholder="PIN baharu (kosongkan jika tiada perubahan)"></div></div>
+    <div style="margin-top:22px;display:grid;gap:10px">
+      <button class="btn gray press" id="btnTestMail">Hantar emel ujian</button>
+      <button class="btn gray press" id="btnLogout" style="color:var(--red)">Log keluar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try{ const v = JSON.parse(localStorage.getItem('aduan_'+k)); return v ?? d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('aduan_'+k, JSON.stringify(v)); return true; }catch(e){ return false; } },
+  del(k){ try{ localStorage.removeItem('aduan_'+k); }catch(e){} }
+};
+const KATEGORI = {
+  Buli: ['Fizikal (pukul, tolak, sepak)','Lisan (ejek, hina, maki)','Siber (media sosial, WhatsApp)','Dipulaukan / Fitnah','Ugutan / Peras ugut','Gangguan seksual','Lain-lain'],
+  Disiplin: ['Ponteng sekolah / kelas','Merokok / Vape','Bergaduh','Vandalisme','Mencuri','Telefon bimbit','Biadab terhadap guru','Pakaian / Rambut','Lain-lain']
+};
+const LOKASI = ['Kelas','Tandas','Kantin','Padang','Koridor','Luar sekolah','Dalam talian'];
+let form = { jenis:'Buli', kategori:'', tahap:'Biasa', bukti:[] };
+let rows = [], filt = { jenis:'', status:'', q:'' }, cur = null;
+
+/* ---------- asas ---------- */
+let toastT;
+function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2800); }
+const gasUrl = () => (CONFIG.GAS_URL || store.get('gasUrl', '')).trim();
+async function api(action, data = {}){
+  const url = gasUrl();
+  if(!url) throw new Error('Aplikasi belum disambungkan. Hubungi pentadbir.');
+  let r;
+  try{ r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({ action, ...data }) }); }
+  catch(e){ const er = new Error('Tiada sambungan internet'); er.network = true; throw er; }
+  let j; try{ j = await r.json(); }catch(e){ throw new Error('Pelayan tidak membalas dengan betul'); }
+  if(!j.ok) throw new Error(j.error || 'Ralat tidak diketahui');
+  return j;
+}
+function busy(btn, on, label){
+  if(on){ btn.dataset.t = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + (label ? ' ' + label : ''); }
+  else { btn.disabled = false; btn.innerHTML = btn.dataset.t; }
+}
+function openSheet(id){ $('#back').classList.add('on'); $('#'+id).classList.add('on'); }
+function closeSheets(){ $('#back').classList.remove('on'); $$('.sheet').forEach(s => s.classList.remove('on')); }
+$('#back').onclick = closeSheets;
+$$('[data-close]').forEach(b => b.onclick = closeSheets);
+function segBind(el, cb){ el.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; segSet(el, b.dataset.v); cb(b.dataset.v); }); }
+function segSet(el, v){ [...el.children].forEach(x => x.classList.toggle('on', x.dataset.v === v)); }
+
+/* ---------- tab ---------- */
+$$('[data-tab]').forEach(b => b.onclick = () => {
+  $$('[data-tab]').forEach(x => x.classList.toggle('on', x === b));
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + b.dataset.tab));
+  scrollTo(0, 0);
+  if(b.dataset.tab === 'semak') renderMine();
+  if(b.dataset.tab === 'guru' && store.get('pin', '') && !rows.length) loadList();
+});
+
+/* ---------- borang ---------- */
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+function chipRender(el, list, sel){ el.innerHTML = list.map(x => `<button class="chip press${x === sel ? ' on' : ''}" data-v="${esc(x)}">${esc(x)}</button>`).join(''); }
+$$('[data-lapor]').forEach(b => b.onclick = () => {
+  form = { jenis: b.dataset.lapor, kategori:'', tahap:'Biasa', bukti:[] };
+  $('#formTitle').textContent = 'Aduan ' + form.jenis;
+  chipRender($('#cKategori'), KATEGORI[form.jenis], '');
+  chipRender($('#cLokasi'), LOKASI, '');
+  segSet($('#cTahap'), 'Biasa');
+  ['fMasa','fLokasi','fTerlibat','fMangsa','fKet'].forEach(i => $('#'+i).value = '');
+  $('#fTarikh').value = today(); $('#fTarikh').max = today();
+  $('#rowMangsa').classList.toggle('hide', form.jenis !== 'Buli');
+  $('#fTerlibat').placeholder = form.jenis === 'Buli' ? 'Nama & kelas pembuli (jika tahu)' : 'Nama & kelas murid yang terlibat (jika tahu)';
+  renderThumbs();
+  $('#formBody').classList.remove('hide'); $('#formDone').classList.add('hide');
+  $('#s-form .body').scrollTop = 0;
+  openSheet('s-form');
+});
+$('#cKategori').onclick = e => { const b = e.target.closest('.chip'); if(!b) return; form.kategori = b.dataset.v; chipRender($('#cKategori'), KATEGORI[form.jenis], form.kategori); };
+$('#cLokasi').onclick = e => { const b = e.target.closest('.chip'); if(!b) return; $('#fLokasi').value = b.dataset.v; chipRender($('#cLokasi'), LOKASI, b.dataset.v); };
+segBind($('#cTahap'), v => form.tahap = v);
+$('#fAnon').onchange = e => $$('.anon-hide').forEach(r => r.classList.toggle('hide', e.target.checked));
+
+function renderThumbs(){
+  $('#thumbs').innerHTML = form.bukti.map((d, i) => `<div class="thumb" style="background-image:url(${d})"><button data-rm="${i}" aria-label="Buang">×</button></div>`).join('') +
+    (form.bukti.length < 3 ? `<button class="thumb add press" id="addPhoto" aria-label="Tambah gambar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>` : '');
+}
+$('#thumbs').onclick = e => {
+  const rm = e.target.closest('[data-rm]');
+  if(rm){ form.bukti.splice(+rm.dataset.rm, 1); renderThumbs(); }
+  else if(e.target.closest('#addPhoto')) $('#file').click();
+};
+function compress(file){
+  return new Promise((res, rej) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => {
+      const s = Math.min(1, 1280 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+      res(c.toDataURL('image/jpeg', .7));
+    };
+    img.onerror = () => rej(new Error('Gambar tidak dapat dibaca')); img.src = u;
+  });
+}
+$('#file').onchange = async e => {
+  for(const f of [...e.target.files].slice(0, 3 - form.bukti.length)){
+    try{ form.bukti.push(await compress(f)); }catch(er){ toast(er.message); }
+  }
+  e.target.value = ''; renderThumbs();
+};
+
+$('#btnHantar').onclick = async () => {
+  const ket = $('#fKet').value.trim();
+  if(!form.kategori) return toast('Sila pilih kategori');
+  if(ket.length < 10) return toast('Sila ceritakan kejadian dengan lebih jelas');
+  const anon = $('#fAnon').checked;
+  const [y, m, d] = ($('#fTarikh').value || today()).split('-');
+  const data = {
+    cid: (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2)),
+    jenis: form.jenis, kategori: form.kategori, tahap: form.tahap,
+    tarikh: `${d}/${m}/${y}`, masa: $('#fMasa').value, lokasi: $('#fLokasi').value.trim(),
+    terlibat: $('#fTerlibat').value.trim(), mangsa: form.jenis === 'Buli' ? $('#fMangsa').value.trim() : '',
+    keterangan: ket, bukti: form.bukti, tanpaNama: anon, peranan: $('#fPeranan').value,
+    pelapor: anon ? '' : $('#fNama').value.trim(), hubungi: anon ? '' : $('#fTel').value.trim()
+  };
+  const btn = $('#btnHantar'); busy(btn, true, 'Menghantar…');
+  try{
+    const j = await api('submit', data);
+    addMine(j.id, data); showDone(j.id);
+  }catch(er){
+    if(er.network){
+      const q = store.get('queue', []); q.push(data);
+      if(!store.set('queue', q)){ data.bukti = []; q[q.length - 1] = data; store.set('queue', q); }
+      showDone(null); renderPending();
+    } else toast(er.message);
+  }finally{ busy(btn, false); }
+};
+function showDone(id){
+  $('#formBody').classList.add('hide'); $('#formDone').classList.remove('hide'); $('#s-form .body').scrollTop = 0;
+  $('#doneTitle').textContent = id ? 'Aduan diterima' : 'Disimpan dahulu';
+  $('#doneSub').textContent = id ? 'Guru disiplin telah dimaklumkan. Simpan no. rujukan ini untuk semak status.' : 'Tiada internet sekarang. Aduan akan dihantar secara automatik apabila talian pulih — buka semula aplikasi ini nanti.';
+  $('#doneRef').textContent = id || ''; $('#doneRef').classList.toggle('hide', !id); $('#btnCopy').classList.toggle('hide', !id);
+}
+$('#btnCopy').onclick = async () => { try{ await navigator.clipboard.writeText($('#doneRef').textContent); toast('Disalin'); }catch(e){ toast('Tekan lama pada no. rujukan untuk salin'); } };
+
+/* ---------- baris gilir luar talian ---------- */
+function renderPending(){
+  const n = store.get('queue', []).length;
+  $('#pendingBanner').classList.toggle('on', n > 0);
+  $('#pendingText').textContent = n + ' aduan menunggu sambungan internet';
+}
+let flushing = false;
+async function flush(){
+  if(flushing || !navigator.onLine || !gasUrl()) return; flushing = true;
+  let q = store.get('queue', []);
+  while(q.length){
+    try{ const j = await api('submit', q[0]); addMine(j.id, q[0]); toast('Aduan tertangguh dihantar: ' + j.id); }
+    catch(er){ if(er.network) break; }
+    q.shift(); store.set('queue', q);
+  }
+  flushing = false; renderPending();
+}
+addEventListener('online', flush);
+
+/* ---------- semak ---------- */
+function addMine(id, d){ const m = store.get('mine', []); m.unshift({ id, jenis: d.jenis, kategori: d.kategori, t: Date.now() }); store.set('mine', m.slice(0, 30)); }
+function renderMine(){
+  const m = store.get('mine', []);
+  $('#mineWrap').classList.toggle('hide', !m.length);
+  $('#mine').innerHTML = m.map(x => `<button class="item" data-id="${esc(x.id)}"><div class="h"><span class="badge b-${esc(x.jenis)}">${esc(x.jenis)}</span><time>${new Date(x.t).toLocaleDateString('ms-MY')}</time></div><b>${esc(x.id)}</b><p>${esc(x.kategori)}</p></button>`).join('');
+}
+$('#mine').onclick = e => { const b = e.target.closest('[data-id]'); if(b){ $('#semakId').value = b.dataset.id; semak(); scrollTo(0, 0); } };
+$('#clearMine').onclick = e => { e.preventDefault(); if(confirm('Padam senarai aduan dari peranti ini? (Aduan di sekolah tidak terjejas)')){ store.del('mine'); renderMine(); } };
+const bStatus = s => `<span class="badge b-${esc(String(s).split(' ')[0])}">${esc(s)}</span>`;
+async function semak(){
+  const id = $('#semakId').value.trim().toUpperCase();
+  if(!id) return toast('Masukkan no. rujukan');
+  const btn = $('#btnSemak'); busy(btn, true);
+  try{
+    const j = await api('status', { id });
+    $('#semakOut').innerHTML = `<div class="label">Keputusan</div><div class="card">
+      <div class="kv"><small>No. rujukan</small><div><b>${esc(j.id)}</b></div></div>
+      <div class="kv"><small>Status</small><div>${bStatus(j.status)}</div></div>
+      <div class="kv"><small>Aduan</small><div>${esc(j.jenis)} · ${esc(j.kategori)}</div></div>
+      <div class="kv"><small>Dihantar</small><div>${esc(j.masaHantar)}</div></div>
+      ${j.maklumBalas ? `<div class="kv"><small>Maklum balas guru</small><div>${esc(j.maklumBalas)}</div></div>` : ''}
+      ${j.masaKemaskini ? `<div class="kv"><small>Dikemaskini</small><div>${esc(j.masaKemaskini)}</div></div>` : ''}</div>`;
+  }catch(er){ $('#semakOut').innerHTML = `<div class="empty">${esc(er.message)}</div>`; }
+  finally{ busy(btn, false); }
+}
+$('#btnSemak').onclick = semak;
+$('#semakId').onkeydown = e => { if(e.key === 'Enter') semak(); };
+
+/* ---------- guru ---------- */
+function guruUI(){ const inn = !!store.get('pin', ''); $('#guruLock').classList.toggle('hide', inn); $('#guruMain').classList.toggle('hide', !inn); }
+$('#btnLogin').onclick = async () => {
+  const pin = $('#pin').value.trim(); if(!pin) return toast('Masukkan PIN');
+  const btn = $('#btnLogin'); busy(btn, true);
+  try{ const j = await api('login', { pin }); store.set('pin', pin); setSekolah(j.sekolah); $('#pin').value = ''; guruUI(); loadList(); }
+  catch(er){ toast(er.message); } finally{ busy(btn, false); }
+};
+$('#pin').onkeydown = e => { if(e.key === 'Enter') $('#btnLogin').click(); };
+function logout(){ store.del('pin'); rows = []; closeSheets(); guruUI(); }
+$('#btnLogout').onclick = logout;
+async function loadList(){
+  $('#list').innerHTML = '<div class="spin dk"></div>';
+  try{ rows = (await api('list', { pin: store.get('pin', '') })).rows; renderList(); }
+  catch(er){ if(/PIN/.test(er.message)){ logout(); toast('Sila masukkan PIN semula'); } else $('#list').innerHTML = `<div class="empty">${esc(er.message)}</div>`; }
+}
+$('#btnRefresh').onclick = loadList;
+function renderList(){
+  const cnt = s => rows.filter(r => r.status === s && (!filt.jenis || r.jenis === filt.jenis)).length;
+  $('#stats').innerHTML = [['Baru','Baru','--blue'],['Dalam Siasatan','Siasatan','--orange'],['Selesai','Selesai','--green']]
+    .map(([s, l, c]) => `<button class="stat press${filt.status === s ? ' on' : ''}" data-s="${s}"><b style="color:var(${c})">${cnt(s)}</b><span>${l}</span></button>`).join('');
+  const q = filt.q.toLowerCase();
+  const out = rows.filter(r => (!filt.jenis || r.jenis === filt.jenis) && (!filt.status || r.status === filt.status) &&
+    (!q || [r.id, r.kategori, r.terlibat, r.mangsa, r.keterangan, r.lokasi, r.pelapor].join(' ').toLowerCase().includes(q)));
+  $('#list').innerHTML = out.length ? out.map(r => `<button class="item" data-id="${esc(r.id)}">
+    <div class="h"><span class="badge b-${esc(r.jenis)}">${esc(r.jenis)}</span>${bStatus(r.status)}${r.tahap === 'Segera' && r.status !== 'Selesai' ? '<span class="badge b-Segera">SEGERA</span>' : ''}<time>${esc(r.masaHantar)}</time></div>
+    <b>${esc(r.kategori)}</b><p>${esc(r.terlibat ? r.terlibat + ' — ' : '')}${esc(r.keterangan)}</p></button>`).join('') : '<div class="empty">Tiada aduan</div>';
+}
+$('#stats').onclick = e => { const b = e.target.closest('[data-s]'); if(!b) return; filt.status = filt.status === b.dataset.s ? '' : b.dataset.s; renderList(); };
+segBind($('#fJenis'), v => { filt.jenis = v; renderList(); });
+$('#q').oninput = e => { filt.q = e.target.value; renderList(); };
+$('#list').onclick = e => {
+  const b = e.target.closest('[data-id]'); if(!b) return;
+  cur = rows.find(r => r.id === b.dataset.id); if(!cur) return;
+  const kv = (k, v) => v ? `<div class="kv"><small>${k}</small><div>${esc(v)}</div></div>` : '';
+  const links = String(cur.bukti || '').split(/\s+/).filter(u => /^https:\/\/(drive|docs)\.google\.com\//.test(u));
+  $('#dTitle').textContent = cur.id;
+  $('#dInfo').innerHTML = `<div class="kv"><div><span class="badge b-${esc(cur.jenis)}">${esc(cur.jenis)}</span> ${cur.tahap === 'Segera' ? '<span class="badge b-Segera">SEGERA</span>' : ''}</div></div>` +
+    kv('Kategori', cur.kategori) + kv('Kejadian', [cur.tarikh, cur.masa].filter(Boolean).join(' · ')) + kv('Lokasi', cur.lokasi) +
+    kv(cur.jenis === 'Buli' ? 'Pembuli / terlibat' : 'Murid terlibat', cur.terlibat) + kv('Mangsa', cur.mangsa) + kv('Keterangan', cur.keterangan) +
+    (links.length ? `<div class="kv"><small>Bukti</small>${links.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">Gambar ${i + 1} ↗</a>`).join('')}</div>` : '') +
+    kv('Pelapor', cur.pelapor + (cur.peranan ? ' (' + cur.peranan + ')' : '')) + kv('Hubungi', cur.hubungi) + kv('Dihantar', cur.masaHantar) +
+    kv('Kemaskini terakhir', cur.masaKemaskini ? cur.masaKemaskini + (cur.oleh ? ' oleh ' + cur.oleh : '') : '');
+  segSet($('#dStatus'), cur.status || 'Baru'); $('#dStatus').dataset.v = cur.status || 'Baru';
+  $('#dMaklum').value = cur.maklumBalas || ''; $('#dCatatan').value = cur.catatan || ''; $('#dOleh').value = store.get('guru', '') || cur.oleh || '';
+  $('#s-detail .body').scrollTop = 0; openSheet('s-detail');
+};
+segBind($('#dStatus'), v => $('#dStatus').dataset.v = v);
+$('#btnSave').onclick = async () => {
+  if(!cur) return;
+  const d = { pin: store.get('pin', ''), id: cur.id, status: $('#dStatus').dataset.v, maklumBalas: $('#dMaklum').value.trim(), catatan: $('#dCatatan').value.trim(), oleh: $('#dOleh').value.trim() };
+  const btn = $('#btnSave'); btn.disabled = true; btn.textContent = '…';
+  try{
+    await api('update', d); store.set('guru', d.oleh);
+    Object.assign(cur, { status: d.status, maklumBalas: d.maklumBalas, catatan: d.catatan, oleh: d.oleh, masaKemaskini: new Date().toLocaleString('en-GB', { dateStyle:'short', timeStyle:'short' }).replace(',', '') });
+    renderList(); closeSheets(); toast('Dikemaskini');
+  }catch(er){ toast(er.message); } finally{ btn.disabled = false; btn.textContent = 'Simpan'; }
+};
+
+/* ---------- tetapan ---------- */
+function setSekolah(n){ if(n){ store.set('sekolah', n); } $('#sekolah').textContent = store.get('sekolah', '') || CONFIG.SEKOLAH || 'Saluran Aduan Sekolah'; }
+$('#btnGear').onclick = () => {
+  $('#gasUrl').value = gasUrl(); $('#gasUrl').disabled = !!CONFIG.GAS_URL;
+  $('#gearNote').textContent = CONFIG.GAS_URL ? 'Sambungan telah ditetapkan oleh pentadbir.' : 'Untuk pentadbir sahaja. URL Web App yang berakhir dengan /exec.';
+  openSheet('s-gear');
+};
+$('#btnGearSave').onclick = async () => {
+  if(CONFIG.GAS_URL) return closeSheets();
+  const u = $('#gasUrl').value.trim();
+  if(u && !/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)) return toast('URL mesti berakhir dengan /exec');
+  store.set('gasUrl', u); closeSheets(); toast('Disimpan'); ping(); flush();
+};
+$('#btnAdminSet').onclick = async () => {
+  openSheet('s-admin'); $('#aPin').value = '';
+  try{ const j = await api('getSettings', { pin: store.get('pin', '') }); $('#aSekolah').value = j.sekolah; $('#aEmel').value = j.emel.split(/[,;\s]+/).filter(Boolean).join('\n'); }
+  catch(er){ toast(er.message); }
+};
+$('#btnAdminSave').onclick = async () => {
+  const emel = $('#aEmel').value.split(/[,;\s]+/).filter(Boolean);
+  const bad = emel.find(x => !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
+  if(bad) return toast('Emel tidak sah: ' + bad);
+  const pinBaru = $('#aPin').value.trim();
+  if(pinBaru && !/^\d{4,8}$/.test(pinBaru)) return toast('PIN mesti 4–8 digit');
+  const btn = $('#btnAdminSave'); btn.disabled = true;
+  try{
+    await api('saveSettings', { pin: store.get('pin', ''), sekolah: $('#aSekolah').value.trim(), emel: emel.join(', '), pinBaru });
+    if(pinBaru) store.set('pin', pinBaru);
+    setSekolah($('#aSekolah').value.trim()); closeSheets(); toast('Tetapan disimpan');
+  }catch(er){ toast(er.message); } finally{ btn.disabled = false; }
+};
+$('#btnTestMail').onclick = async () => {
+  const btn = $('#btnTestMail'); busy(btn, true);
+  try{ await api('testEmail', { pin: store.get('pin', '') }); toast('Emel ujian dihantar'); }catch(er){ toast(er.message); } finally{ busy(btn, false); }
+};
+
+/* ---------- mula ---------- */
+async function ping(){ if(!gasUrl()) return; try{ const j = await (await fetch(gasUrl())).json(); setSekolah(j.sekolah); }catch(e){} }
+setSekolah(); guruUI(); renderPending(); ping(); flush();
+if('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
