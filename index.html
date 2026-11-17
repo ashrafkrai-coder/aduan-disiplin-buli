@@ -162,7 +162,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
 
 /* ===== Responsif: halaman Lapor muat satu skrin (telefon) ===== */
 #app{min-height:100dvh}
-.view{padding-bottom:calc(var(--sab) + 92px)}
+.view{padding-bottom:calc(var(--sab) + 108px)}
 #v-lapor h1{font-size:clamp(26px,4.2dvh,34px);margin:0 0 clamp(8px,1.6dvh,16px)}
 #v-lapor .hero{padding:clamp(14px,2.2dvh,22px)}
 #v-lapor .hero p{font-size:clamp(13px,1.7dvh,14.5px)}
@@ -177,10 +177,14 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
   #v-lapor .note{display:none}
 }
 
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand img{height:clamp(34px,4.6dvh,42px);width:auto;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18))}
-#v-lapor .top{min-height:clamp(38px,5dvh,44px)}
-.credit{text-align:center;font-size:11px;color:var(--sub);opacity:.8;margin-top:clamp(10px,2dvh,22px)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{height:clamp(48px,6.6dvh,60px);width:auto;flex:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.18))}
+.brand-t{min-width:0}
+#v-lapor .brand-t h1{font-size:clamp(21px,2.9dvh,26px);font-weight:800;letter-spacing:-.4px;line-height:1.15;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-t span{display:block;font-size:clamp(13px,1.7dvh,14.5px);font-weight:600;color:var(--blue);margin-top:2px}
+#v-lapor .top{margin-bottom:clamp(12px,2.2dvh,20px)}
+.credit{position:fixed;left:0;right:0;bottom:calc(var(--sab) + 5px);z-index:19;text-align:center;font-size:11px;line-height:14px;color:var(--sub);opacity:.8;pointer-events:none}
+.tabbar{padding-bottom:calc(var(--sab) + 24px)}
 
 /* Tablet */
 @media (min-width:700px){
@@ -211,10 +215,9 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
 
 <!-- ================= LAPOR ================= -->
 <section class="view on" id="v-lapor">
-  <div class="top"><div class="brand"><img src="logo.png" alt="Logo SMK Taman Medan" width="34" height="39"><div class="eyebrow" id="sekolah">SMK Taman Medan</div></div>
+  <div class="top"><div class="brand"><img src="logo.png" alt="Logo SMK Taman Medan" width="52" height="60"><div class="brand-t"><h1 id="sekolah">SMK Taman Medan</h1><span>Sistem Aduan Disiplin &amp; Buli</span></div></div>
     <button class="ibtn" id="btnGear" aria-label="Tetapan" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
-  <h1>Aduan</h1>
   <div class="banner" id="pendingBanner">⏳ <span id="pendingText"></span></div>
   <div class="cols"><div class="colA">
   <div class="hero"><b>Suara anda dilindungi.</b><p>Laporkan kes buli atau salah laku disiplin. Anda boleh melapor tanpa nama — hanya guru disiplin yang dapat melihat aduan.</p></div>
@@ -231,7 +234,6 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
   </div>
   <p class="note">Jika anda atau rakan dalam bahaya sekarang, terus maklumkan kepada guru berdekatan.</p>
   </div></div>
-  <div class="credit">Developed and managed by ustazashraf · v 1.0</div>
 </section>
 
 <!-- ================= SEMAK ================= -->
@@ -277,6 +279,7 @@ h1{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 16px}
   <button data-tab="semak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8.5 11l2 2 3.5-4"/></svg>Semak</button>
   <button data-tab="guru"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Guru</button>
 </nav></div>
+<div class="credit">Developed and managed by ustazashraf · v 1.0</div>
 
 <div class="back" id="back"></div>
 
